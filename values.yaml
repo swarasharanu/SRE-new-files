@@ -1,0 +1,16 @@
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+scrape_configs:
+  - job_name: 'http/api'
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: ['10.233.44.231:9100']
+        labels:
+          service: 'app-service'
+          group: 'production'
+rule_files:
+  - 'alert.rules'

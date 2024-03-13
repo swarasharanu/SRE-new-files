@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: 267767410086.dkr.ecr.us-east-1.amazonaws.com/monitoring:backendv1
+        ports:
+        - containerPort: 4040
+      imagePullSecrets:
+      - name: ecr-credentials
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: backend
+  ports:
+    - name: cont
+      port: 4040
+      targetPort: 4040
+    - name: exporter
+      port: 9100

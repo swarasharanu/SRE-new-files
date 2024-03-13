@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+spec:
+  serviceName: "mongodb"
+  replicas: 1 # Set the desired number of MongoDB pods
+
+  selector:
+    matchLabels:
+      app: mongodb
+
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:latest # You can use a specific MongoDB image
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongodb
+          mountPath: /data/mongodb
+      imagePullSecrets:
+      - name: ecr-credentials
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodb
+    spec:
+      accessModes: ["ReadWriteMany"]
+      storageClassName: standard # Specify your storage class
+      resources:
+        requests:
+          storage: 1Gi # Adjust the storage size as needed
+
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  type: ClusterIP
+  selector:
+    app: mongodb
+  ports:
+    - port: 27017
+      targetPort: 27017
